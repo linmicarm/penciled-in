@@ -28,22 +28,11 @@ export type Presence = {
 export type ServerToClientEvents = {
   "board:state": (board: Board) => void;
   "card:moved": (move: Move) => void;
-  "presence:update": (users: Presence[]) => void;
-};
-
-// events we send the server
-export type ClientToServerEvents = {
-  join: (payload: { name: string }) => void;
-  "card:move": (move: Move) => void;
-};
-
-export type ServerToClientEvents = {
-  "board:state": (board: Board) => void;
-  "card:moved": (move: Move) => void;
   "card:created": (payload: { columnId: string; card: Card }) => void;
   "presence:update": (users: Presence[]) => void;
 };
 
+// events we send the server
 export type ClientToServerEvents = {
   join: (payload: { name: string }) => void;
   "card:move": (move: Move) => void;
