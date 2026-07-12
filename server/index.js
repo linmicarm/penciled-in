@@ -9,7 +9,7 @@ app.use(cors());
 
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
-  cors: { origin: "http://localhost:5173" },
+  cors: { origin: process.env.CLIENT_ORIGIN || "http://localhost:5173" },
 });
 
 // hydrated from the db on boot, then held in memory as the live truth
@@ -78,7 +78,7 @@ io.on("connection", (socket) => {
   });
 });
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 httpServer.listen(PORT, () => {
   console.log(`✿ penciled in server on :${PORT}`);
 });
