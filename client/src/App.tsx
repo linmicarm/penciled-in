@@ -22,6 +22,23 @@ const NAME =
   "-" +
   Math.floor(Math.random() * 100);
 
+const PENCILS = ["#d4849a", "#84a4d4", "#84d4a4", "#d4b884", "#a984d4"];
+
+function pencilFor(name: string) {
+  const i = [...name].reduce((sum, ch) => sum + ch.charCodeAt(0), 0);
+  return {
+    "--pencil": PENCILS[i % PENCILS.length],
+    "--tilt": `${(i % 5) * 6 - 12}deg`,
+  } as React.CSSProperties;
+}
+
+// deterministic per-card tilt, never lands flat
+function tiltFor(id: string) {
+  const n = [...id].reduce((sum, ch) => sum + ch.charCodeAt(0), 0);
+  const t = (n % 9) - 4;
+  return t + (t >= 0 ? 1 : -1);
+}
+
 function applyMove(board: Board, { cardId, toColumnId, newIndex }: Move): Board {
   const columns = board.columns.map((c) => ({ ...c, cards: [...c.cards] }));
   const from = columns.find((c) => c.cards.some((k) => k.id === cardId));
@@ -38,11 +55,20 @@ function SortableCard({ card }: { card: Card }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: card.id });
 
+  const tilt = isDragging ? -4.5 : tiltFor(card.id);
+
+  // compose our rotation into dnd-kit's inline transform, or CSS gets clobbered
+  const base = CSS.Transform.toString(transform) ?? "";
+  const scale = isDragging ? " scale(1.04)" : "";
+
   return (
     <div
       ref={setNodeRef}
       className={`card ${isDragging ? "dragging" : ""}`}
-      style={{ transform: CSS.Transform.toString(transform), transition }}
+      style={{
+        transform: `${base} rotate(${tilt}deg)${scale}`,
+        transition,
+      }}
       {...attributes}
       {...listeners}
     >
@@ -88,7 +114,6 @@ function App() {
   const [board, setBoard] = useState<Board | null>(null);
   const [users, setUsers] = useState<Presence[]>([]);
 
-  // 6px threshold so a click isn't read as a drag
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } })
   );
@@ -99,28 +124,30 @@ function App() {
 
     socket.on("board:state", setBoard);
     socket.on("presence:update", setUsers);
+
     socket.on("card:moved", (move) => {
       setBoard((prev) => (prev ? applyMove(prev, move) : prev));
     });
+
     socket.on("card:created", ({ columnId, card }) => {
-  setBoard((prev) =>
-    prev
-      ? {
-          ...prev,
-          columns: prev.columns.map((c) =>
-            c.id === columnId ? { ...c, cards: [...c.cards, card] } : c
-          ),
-        }
-      : prev
-  );
-});
+      setBoard((prev) =>
+        prev
+          ? {
+              ...prev,
+              columns: prev.columns.map((c) =>
+                c.id === columnId ? { ...c, cards: [...c.cards, card] } : c
+              ),
+            }
+          : prev
+      );
+    });
 
     return () => {
       socket.off("board:state");
       socket.off("presence:update");
       socket.off("card:moved");
-      socket.disconnect();
       socket.off("card:created");
+      socket.disconnect();
     };
   }, []);
 
@@ -130,7 +157,6 @@ function App() {
     const cardId = String(active.id);
     const overId = String(over.id);
 
-    // dropped on a column, or on another card inside one
     const targetColumn =
       board.columns.find((c) => c.id === overId) ??
       board.columns.find((c) => c.cards.some((k) => k.id === overId));
@@ -150,10 +176,10 @@ function App() {
   return (
     <div className="app">
       <header>
-        <h1>penciled in ✎</h1>
+        <h1>penciled in</h1>
         <div className="presence">
           {users.map((u, i) => (
-            <span key={i} className="pill">
+            <span key={i} className="pill" style={pencilFor(u.name)}>
               {u.name}
             </span>
           ))}
