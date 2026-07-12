@@ -194,4 +194,17 @@ header h1 {
   color: var(--graphite-soft);
 }
 
-@media
+@media (max-width: 720px) {
+  .board {
+    grid-template-columns: 1fr;
+  }
+  .app {
+    padding: 2rem 1rem 3rem 3rem;
+  }
+  .app::before {
+    left: 1.75rem;
+  }
+  header h1 {
+    font-size: 2rem;
+  }
+}
