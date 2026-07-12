@@ -1,0 +1,151 @@
+:root {
+  --paper: #faf7f2;
+  --ink: #4a4038;
+  --ink-soft: #8a7f75;
+  --rose: #d4a5a5;
+  --rose-soft: #f0dede;
+  --line: #e8e0d8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Nunito", system-ui, sans-serif;
+}
+
+.app {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.presence {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.pill {
+  background: var(--rose-soft);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.column {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1rem;
+  min-height: 220px;
+}
+
+.column h2 {
+  margin: 0 0 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+}
+
+.card {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--rose);
+  border-radius: 8px;
+  padding: 0.7rem 0.85rem;
+  margin-bottom: 0.5rem;
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--ink);
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(74, 64, 56, 0.08);
+}
+
+.loading {
+  text-align: center;
+  padding: 4rem;
+  color: var(--ink-soft);
+}
+
+@media (max-width: 720px) {
+  .board {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  touch-action: none;
+  user-select: none;
+}
+
+.card.dragging {
+  opacity: 0.4;
+}
+
+.column.over {
+  background: var(--rose-soft);
+  border-color: var(--rose);
+}
+
+.add-card {
+  width: 100%;
+  background: transparent;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  padding: 0.7rem 0.85rem;
+  margin-top: 0.25rem;
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--ink);
+}
+
+.add-card::placeholder {
+  color: var(--ink-soft);
+}
+
+.add-card:focus {
+  outline: none;
+  border-style: solid;
+  border-color: var(--rose);
+  background: #fff;
+}
