@@ -7,6 +7,8 @@ import { loadBoard, persistBoard, insertCard } from "./db.js";
 const app = express();
 app.use(cors());
 
+app.get("/", (_req, res) => res.send("✿ penciled in — socket server"));
+
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: { origin: process.env.CLIENT_ORIGIN || "http://localhost:5173" },
